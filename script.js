@@ -21,11 +21,12 @@ async function submitTicket() {
     const data = await response.json();
 
     if (data.error) {
-      alert('Error: ' + data.error);
-    } else {
-      addTicketToTable(text, data);
-      ticketInput.value = '';
-    }
+  alert('Error: ' + data.error);
+} else {
+  addTicketToTable(text, data);
+  window.saveTicketToFirebase(text, data);
+  ticketInput.value = '';
+}
   } catch (err) {
     alert('Error connecting to backend. Check console.');
     console.error(err);
@@ -45,5 +46,19 @@ function addTicketToTable(text, classification) {
   `;
   tableBody.prepend(row); // newest ticket on top
 }
+function loadExistingTickets() {
+  window.loadTicketsFromFirebase().then((tickets) => {
+    tickets.forEach((ticket) => {
+      addTicketToTable(ticket.ticketText, {
+        category: ticket.category,
+        severity: ticket.severity,
+        routingTeam: ticket.routingTeam
+      });
+    });
+  });
+}
+
+// Load tickets as soon as the page opens
+loadExistingTickets();
 
 submitBtn.addEventListener('click', submitTicket);

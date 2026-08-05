@@ -94,5 +94,51 @@
 </table>
 
 <script src="script.js"></script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, orderBy, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBqiIfxhYcxsHhVEmWBpdGZKw3DEab5l1U",
+    authDomain: "escalation-router-1d55b.firebaseapp.com",
+    projectId: "escalation-router-1d55b",
+    storageBucket: "escalation-router-1d55b.firebasestorage.app",
+    messagingSenderId: "122762594165",
+    appId: "1:122762594165:web:5dcc44665fd7586802f53c"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  window.saveTicketToFirebase = async function(ticketText, classification) {
+    try {
+      await addDoc(collection(db, "tickets"), {
+        ticketText: ticketText,
+        category: classification.category,
+        severity: classification.severity,
+        routingTeam: classification.routingTeam,
+        reasoning: classification.reasoning,
+        timestamp: serverTimestamp()
+      });
+    } catch (err) {
+      console.error("Firebase save error:", err);
+    }
+  };
+
+  window.loadTicketsFromFirebase = async function() {
+    try {
+      const q = query(collection(db, "tickets"), orderBy("timestamp", "desc"));
+      const snapshot = await getDocs(q);
+      const tickets = [];
+      snapshot.forEach((doc) => {
+        tickets.push(doc.data());
+      });
+      return tickets;
+    } catch (err) {
+      console.error("Firebase load error:", err);
+      return [];
+    }
+  };
+</script>
 </body>
 </html>
