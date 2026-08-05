@@ -2,147 +2,466 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Escalation Router — Ops Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gaurav — AI Builder</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Inter:wght@400;500&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+
 <style>
+  :root {
+    --bg: #F6F8FA;
+    --surface: #FFFFFF;
+    --ink: #17212B;
+    --body-text: #4B5B6B;
+    --border: #E1E6EB;
+    --blue: #2E6F9E;
+    --blue-tint: #E9F2F8;
+    --teal: #2E7D6B;
+    --teal-tint: #E8F4F1;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
   body {
-    font-family: Arial, sans-serif;
-    background: #f4f6f8;
-    padding: 40px 20px;
-    max-width: 900px;
+    background: var(--bg);
+    color: var(--body-text);
+    font-family: 'Inter', sans-serif;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 760px;
     margin: 0 auto;
+    padding: 0 24px;
   }
-  h1 { color: #17212B; }
-  .submit-box {
-    background: white;
-    border-radius: 12px;
-    padding: 24px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    margin-bottom: 30px;
-  }
-  textarea {
-    width: 100%;
-    min-height: 80px;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 14px;
-    font-family: Arial, sans-serif;
-    resize: vertical;
-  }
-  button {
-    margin-top: 12px;
-    padding: 10px 20px;
-    background: #2E6F9E;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-  }
-  button:disabled { opacity: 0.5; cursor: not-allowed; }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    background: white;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-  }
-  th, td {
-    text-align: left;
-    padding: 12px;
-    border-bottom: 1px solid #eee;
-    font-size: 14px;
-  }
-  th { background: #17212B; color: white; }
-  .badge {
+
+  .tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
     padding: 4px 10px;
     border-radius: 4px;
-    font-size: 12px;
-    font-weight: bold;
-    color: white;
+    background: var(--blue-tint);
+    color: var(--blue);
   }
-  .Low { background: #2E7D6B; }
-  .Medium { background: #C99A2E; }
-  .High { background: #C9642E; }
-  .Critical { background: #C92E2E; }
+  .tag.teal { background: var(--teal-tint); color: var(--teal); }
+
+  header {
+    padding: 96px 0 56px;
+    border-bottom: 1px solid var(--border);
+  }
+  header .tag { margin-bottom: 20px; }
+  h1 {
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 42px;
+    color: var(--ink);
+    letter-spacing: -0.02em;
+  }
+  header p.role {
+    margin-top: 10px;
+    font-size: 18px;
+    color: var(--blue);
+    font-weight: 500;
+  }
+
+  section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+  section:last-of-type { border-bottom: none; }
+
+  h2 {
+    font-family: 'Sora', sans-serif;
+    font-size: 22px;
+    color: var(--ink);
+    margin-bottom: 20px;
+  }
+
+  section.intro p {
+    font-size: 17px;
+    max-width: 620px;
+  }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+  }
+  .skill-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .skill-card .check {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    border-radius: 5px;
+    background: var(--teal-tint);
+    color: var(--teal);
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .skill-card h3 {
+    font-family: 'Sora', sans-serif;
+    font-size: 15px;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .skill-card p {
+    font-size: 14px;
+    color: var(--body-text);
+  }
+
+  .queue-card {
+    background: var(--surface);
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    padding: 40px;
+    text-align: center;
+  }
+  .queue-card p {
+    margin-top: 10px;
+    font-size: 15px;
+  }
+
+  .contact-links {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .contact-links a {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 15px;
+    color: var(--ink);
+    text-decoration: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 12px 22px;
+    border-radius: 8px;
+    transition: border-color 0.15s ease, color 0.15s ease;
+  }
+  .contact-links a:hover {
+    border-color: var(--blue);
+    color: var(--blue);
+  }
+
+  footer {
+    padding: 40px 0 60px;
+    font-size: 13px;
+    color: #8B97A3;
+  }
+
+ /* ========== PROJECT CARDS ========== */
+  .project-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 24px;
+  }
+
+  .project-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .project-header h3 {
+    font-family: 'Sora', sans-serif;
+    font-size: 18px;
+    color: var(--ink);
+    margin: 0;
+  }
+
+  .project-status {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    background: #E8F4F1;
+    color: var(--teal);
+    padding: 5px 10px;
+    border-radius: 4px;
+  }
+
+  .project-description {
+    font-size: 15px;
+    color: var(--ink);
+    margin: 0 0 12px;
+    line-height: 1.6;
+  }
+
+  .project-why {
+    font-size: 14px;
+    color: var(--body-text);
+    margin: 0 0 16px;
+    line-height: 1.6;
+    font-style: italic;
+  }
+
+  .project-links {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary, .btn-secondary {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    text-decoration: none;
+    border-radius: 8px;
+    padding: 11px 18px;
+    display: inline-block;
+    transition: all 0.15s ease;
+    cursor: pointer;
+    border: 1px solid transparent;
+  }
+
+  .btn-primary {
+    background: var(--blue);
+    color: #fff;
+  }
+  .btn-primary:hover {
+    background: #2563A8;
+  }
+
+  .btn-secondary {
+    background: var(--blue-tint);
+    color: var(--blue);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover {
+    background: #F0F7FF;
+  }
+
+  .project-how, .project-use {
+    background: var(--bg);
+    border-left: 3px solid var(--blue);
+    padding: 12px 16px;
+    margin: 12px 0;
+    border-radius: 6px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .project-how p, .project-use p {
+    margin: 0;
+  }
+
+  .case-study-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-top: 24px;
+  }
+
+  .case-study-box h4 {
+    font-family: 'Sora', sans-serif;
+    font-size: 16px;
+    color: var(--ink);
+    margin: 0 0 16px;
+  }
+
+  .case-study-box p {
+    font-size: 14px;
+    color: var(--body-text);
+    line-height: 1.65;
+    margin: 0 0 12px;
+  }
+
+  .case-study-box p:last-child {
+    margin-bottom: 0;
+  } @media (max-width: 600px) {
+    header { padding: 64px 0 40px; }
+    h1 { font-size: 38px; }
+    section { padding: 40px 0; }
+  }
 </style>
 </head>
 <body>
 
-<h1>Escalation Router — Ops Dashboard</h1>
+<div class="wrap">
 
-<div class="submit-box">
-  <label for="ticketInput"><strong>Submit a new ticket:</strong></label><br><br>
-  <textarea id="ticketInput" placeholder="Describe the issue or content report..."></textarea>
-  <br>
-  <button id="submitBtn">Submit & Classify</button>
+  <header>
+    <span class="tag">STATUS: BUILDING</span>
+    <h1>Gaurav</h1>
+    <p class="role">Trust &amp; Safety Specialist → AI Builder</p>
+  </header>
+
+  <section class="intro">
+    <h2>About</h2>
+    <p>
+      I currently work in content moderation, AI evaluation, and Trust &amp; Safety
+      at TELUS International, where I review and quality-check content at scale.
+      I'm now learning to build AI-powered tools, automations, and applications —
+      turning the judgment I've built reviewing AI output into the skill of building it.
+    </p>
+  </section>
+
+  <section class="skills">
+    <h2>Skills</h2>
+    <div class="skills-grid">
+
+      <div class="skill-card">
+        <span class="check">✓</span>
+        <h3>AI tools</h3>
+        <p>Claude, ChatGPT</p>
+      </div>
+
+      <div class="skill-card">
+        <span class="check">✓</span>
+        <h3>Web building</h3>
+        <p>HTML &amp; CSS fundamentals</p>
+      </div>
+
+      <div class="skill-card">
+        <span class="check">✓</span>
+        <h3>AI automation</h3>
+        <p>Building workflows and tools</p>
+      </div>
+
+      <div class="skill-card">
+        <span class="check">✓</span>
+        <h3>Content quality &amp; evaluation</h3>
+        <p>2+ year reviewing content and enforcing policy at scale</p>
+      </div>
+
+    </div>
+  </section>
+
+  <section class="projects">
+    <h2>Projects</h2>
+    
+    <div class="project-card">
+      <div class="project-header">
+        <h3>Signal — Content Moderation Assistant</h3>
+        <span class="project-status">Live</span>
+      </div>
+      
+      <p class="project-description">
+        An AI-powered content moderation tool that detects spam, phishing, and policy violations across 12 risk categories. Analyzes text instantly and assigns risk decisions (SPAM/SAFE/NEEDS REVIEW) with confidence scores and detailed reasoning.
+      </p>
+      
+      <p class="project-why">
+        Built from 1+ years of content moderation experience at TELUS International. Signal automates the exact spam detection patterns I apply daily—Telegram solicitation, IPTV piracy, gambling spam, crypto scams, phishing, and more.
+      </p>
+      
+      <div class="project-links">
+        <a href="moderation-tool.html" class="btn-primary">Try Signal →</a>
+        <a href="#signal-case-study" class="btn-secondary">Case Study ↓</a>
+      </div>
+      
+      <div class="project-how">
+        <p><strong>How it works:</strong> Paste content → Signal analyzes against 200+ keywords across 12 categories → Returns decision badge, reasoning, detected flags, and confidence level. Works offline, no API keys needed.</p>
+      </div>
+      
+      <div class="project-use">
+        <p><strong>Use cases:</strong> Reddit moderators, community managers, platform Trust & Safety teams, UGC platforms needing fast triage.</p>
+      </div>
+    </div>
+    
+    <div id="signal-case-study" class="case-study-box">
+      <h4>Signal Case Study</h4>
+      <p><strong>What:</strong> AI-powered content moderation tool that instantly detects spam, phishing, and policy violations across 12 risk categories.</p>
+      <p><strong>Why:</strong> With 1+ years of experience in content moderation and Trust & Safety at TELUS International, I identified a gap: manual spam detection is repetitive and pattern-based. I built Signal to automate the exact judgment patterns I apply daily.</p>
+      <p><strong>How:</strong> Uses a rule-based detection system with 200+ keywords organized into semantic categories (Telegram, IPTV, Betting, Crypto, Loans, Phishing, Adult Content, Work-from-Home scams, Counterfeits, and obfuscated text). Calculates risk scores and weights by severity.</p>
+      <p><strong>Impact:</strong> Moderators can paste suspicious content and instantly get structured decisions. Perfect for any platform handling user-generated content.</p>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header">
+        <h3>Trust & Safety Chatbot</h3>
+        <span class="project-status">Live</span>
+      </div>
+
+      <p class="project-description">
+        An AI-powered assistant that answers content moderation and Trust & Safety questions in real time. Built with a secure serverless backend so no API key is ever exposed to the browser, plus persistent conversation history stored in a live database.
+      </p>
+
+      <p class="project-why">
+        Built to explore full-stack AI application development beyond rule-based tools — going from a static detector like Signal to a dynamic, conversational assistant powered by a real LLM, with the same content moderation expertise shaping the system's behavior.
+      </p>
+
+      <div class="project-links">
+        <a href="https://trust-safety-bot-frontend.vercel.app" class="btn-primary" target="_blank">Try the Bot →</a>
+        <a href="https://github.com/gouravvvv02/trust-safety-bot-frontend" class="btn-secondary" target="_blank">View Code</a>
+      </div>
+
+      <div class="project-how">
+        <p><strong>How it works:</strong> Ask a content moderation or policy question → request goes to a secure Vercel backend → backend calls the Gemini API with a Trust & Safety-focused system prompt → response is returned and saved to Firebase for conversation history.</p>
+      </div>
+
+      <div class="project-use">
+        <p><strong>Use cases:</strong> Quick policy lookups for moderators, onboarding reference for new Trust & Safety hires, or a live demo of applied LLM integration with proper API key security.</p>
+      </div>
+    </div>
+
+    <div class="project-card">
+      <div class="project-header">
+        <h3>Escalation Router — Ops Dashboard</h3>
+        <span class="project-status">Live</span>
+      </div>
+
+      <p class="project-description">
+        An AI-powered triage system that automatically classifies incoming tickets by category, severity, and routing team — turning a live queue of raw reports into structured, actionable data, the same judgment calls I make manually every day in escalation review.
+      </p>
+
+      <p class="project-why">
+        Built to go beyond simple AI text responses (like my chatbot) into structured output — where AI's answer directly drives the app's logic: color-coded severity, routing decisions, and persistent record-keeping, mirroring real Trust & Safety ops tooling.
+      </p>
+
+      <div class="project-links">
+        <a href="https://escalation-router-frontend.vercel.app" class="btn-primary" target="_blank">Try the Dashboard →</a>
+        <a href="https://github.com/gouravvvv02/escalation-router-frontend" class="btn-secondary" target="_blank">View Code</a>
+      </div>
+
+      <div class="project-how">
+        <p><strong>How it works:</strong> Submit a ticket → backend sends it to Gemini with a structured-output prompt → AI returns JSON (category, severity, routing team, reasoning) → result is saved to Firestore and instantly rendered on the dashboard with a color-coded severity badge. Tickets persist across sessions, loading automatically on page open.</p>
+      </div>
+
+      <div class="project-use">
+        <p><strong>Features:</strong></p>
+        <ul style="margin: 0; padding-left: 20px; font-size: 14px; color: var(--body-text); line-height: 1.8;">
+          <li>Real-time AI classification into category, severity, and routing team</li>
+          <li>Structured JSON output — AI's response directly drives app behavior, not just displayed text</li>
+          <li>Color-coded severity badges (Low → Critical) for instant visual triage</li>
+          <li>Persistent ticket history via Firebase/Firestore — survives refreshes and new sessions</li>
+          <li>Taxonomy modeled on real content moderation tagging categories from professional Trust & Safety work</li>
+          <li>Secure serverless backend — API key never exposed to the browser</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="contact">
+    <h2>Contact</h2>
+    <div class="contact-links">
+      <a href="https://github.com/gouravvvv02" target="_blank">GitHub ↗</a>
+      <a href="https://www.linkedin.com/in/gaurav-kumar-97683726b/" target="_blank">LinkedIn ↗</a>
+    </div>
+  </section>
+
+  <footer>
+    &copy; 2026 Gaurav. Built while learning to code.
+  </footer>
+
 </div>
 
-<table>
-  <thead>
-    <tr>
-      <th>Ticket</th>
-      <th>Category</th>
-      <th>Severity</th>
-      <th>Routing Team</th>
-    </tr>
-  </thead>
-  <tbody id="ticketTableBody">
-    <!-- Tickets will appear here -->
-  </tbody>
-</table>
-
-<!-- Firebase setup MUST load before script.js, since script.js uses window.saveTicketToFirebase / window.loadTicketsFromFirebase -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getFirestore, collection, addDoc, getDocs, orderBy, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyBqiIfxhYcxsHhVEmWBpdGZKw3DEab5l1U",
-    authDomain: "escalation-router-1d55b.firebaseapp.com",
-    projectId: "escalation-router-1d55b",
-    storageBucket: "escalation-router-1d55b.firebasestorage.app",
-    messagingSenderId: "122762594165",
-    appId: "1:122762594165:web:5dcc44665fd7586802f53c"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-
-  // Save a new ticket to Firestore
-  window.saveTicketToFirebase = async function(ticketText, classification) {
-    try {
-      await addDoc(collection(db, "tickets"), {
-        ticketText: ticketText,
-        category: classification.category,
-        severity: classification.severity,
-        routingTeam: classification.routingTeam,
-        reasoning: classification.reasoning,
-        timestamp: serverTimestamp()
-      });
-    } catch (err) {
-      console.error("Firebase save error:", err);
-    }
-  };
-
-  // Load all existing tickets when the page opens
-  window.loadTicketsFromFirebase = async function() {
-    try {
-      const q = query(collection(db, "tickets"), orderBy("timestamp", "desc"));
-      const snapshot = await getDocs(q);
-      const tickets = [];
-      snapshot.forEach((doc) => {
-        tickets.push(doc.data());
-      });
-      return tickets;
-    } catch (err) {
-      console.error("Firebase load error:", err);
-      return [];
-    }
-  };
-</script>
-
-<script type="module" src="script.js"></script>
 </body>
 </html>
