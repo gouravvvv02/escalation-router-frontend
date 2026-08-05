@@ -21,3 +21,128 @@
   }
   textarea {
     width: 100%;
+    min-height: 80px;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+    resize: vertical;
+  }
+  button {
+    margin-top: 12px;
+    padding: 10px 20px;
+    background: #2E6F9E;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  }
+  th, td {
+    text-align: left;
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+  }
+  th { background: #17212B; color: white; }
+  .badge {
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+    color: white;
+  }
+  .Low { background: #2E7D6B; }
+  .Medium { background: #C99A2E; }
+  .High { background: #C9642E; }
+  .Critical { background: #C92E2E; }
+</style>
+</head>
+<body>
+
+<h1>Escalation Router — Ops Dashboard</h1>
+
+<div class="submit-box">
+  <label for="ticketInput"><strong>Submit a new ticket:</strong></label><br><br>
+  <textarea id="ticketInput" placeholder="Describe the issue or content report..."></textarea>
+  <br>
+  <button id="submitBtn">Submit & Classify</button>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th>Ticket</th>
+      <th>Category</th>
+      <th>Severity</th>
+      <th>Routing Team</th>
+    </tr>
+  </thead>
+  <tbody id="ticketTableBody">
+    <!-- Tickets will appear here -->
+  </tbody>
+</table>
+
+<!-- Firebase setup MUST load before script.js, since script.js uses window.saveTicketToFirebase / window.loadTicketsFromFirebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs, orderBy, query, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBqiIfxhYcxsHhVEmWBpdGZKw3DEab5l1U",
+    authDomain: "escalation-router-1d55b.firebaseapp.com",
+    projectId: "escalation-router-1d55b",
+    storageBucket: "escalation-router-1d55b.firebasestorage.app",
+    messagingSenderId: "122762594165",
+    appId: "1:122762594165:web:5dcc44665fd7586802f53c"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // Save a new ticket to Firestore
+  window.saveTicketToFirebase = async function(ticketText, classification) {
+    try {
+      await addDoc(collection(db, "tickets"), {
+        ticketText: ticketText,
+        category: classification.category,
+        severity: classification.severity,
+        routingTeam: classification.routingTeam,
+        reasoning: classification.reasoning,
+        timestamp: serverTimestamp()
+      });
+    } catch (err) {
+      console.error("Firebase save error:", err);
+    }
+  };
+
+  // Load all existing tickets when the page opens
+  window.loadTicketsFromFirebase = async function() {
+    try {
+      const q = query(collection(db, "tickets"), orderBy("timestamp", "desc"));
+      const snapshot = await getDocs(q);
+      const tickets = [];
+      snapshot.forEach((doc) => {
+        tickets.push(doc.data());
+      });
+      return tickets;
+    } catch (err) {
+      console.error("Firebase load error:", err);
+      return [];
+    }
+  };
+</script>
+
+<script type="module" src="script.js"></script>
+</body>
+</html>
